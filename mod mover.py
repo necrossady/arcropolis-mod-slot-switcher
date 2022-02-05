@@ -1,8 +1,7 @@
 import os
 import glob
 from tkinter import Tk     # from tkinter import Tk for Python 3.x
-from tkinter.filedialog import askopenfilename
-
+from tkinter.filedialog import askdirectory
 
 def validateRequest(fromSlot, toSlot, modFolder):
     # ensure slots are 0-7
@@ -51,4 +50,19 @@ def getFilesToChange(fromSlot, folder):
     #   get c0X folder where X is fromSlot
     #   change _0X files where X is fromSlot
     pass
+
+def mainLoop():
+    modFolder = getModFolder()
+    fromSlot, toSlot = getSlots()
+    err, msg = validateRequest(fromSlot, toSlot, modFolder)
+    if err:
+        print(msg)
+        input()
+        return
+
+    print("Valid input...")
+
+mainLoop()
+
+
 
