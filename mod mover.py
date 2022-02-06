@@ -54,8 +54,8 @@ def getFilesToChange(fromSlot, folder):
 def mainLoop():
     modFolder = getModFolder()
     fromSlot, toSlot = getSlots()
-    err, msg = validateRequest(fromSlot, toSlot, modFolder)
-    if err:
+    ok, msg = validateRequest(fromSlot, toSlot, modFolder)
+    if not ok:
         print(msg)
         input()
         return
