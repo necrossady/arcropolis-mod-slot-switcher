@@ -85,14 +85,16 @@ def changeFiles(folder, files, fromSlot, toSlot):
         os.rename(oldFile, newFile)
 
 def mainLoop():
-    while True:
+    again = True 
+    
+    while again:
         modFolder = getModFolder()
         fromSlot, toSlot = getSlots()
-        ok, cPath = validateRequest(fromSlot, toSlot, modFolder)
+        ok, msg = validateRequest(fromSlot, toSlot, modFolder)
         if not ok:
             print(msg)
             input()
-            return
+        cPath = msg
     
         op = queryOperation()
     
@@ -105,6 +107,19 @@ def mainLoop():
         files = getFilesToChange(fromSlot, modFolder)
     
         changeFiles(modFolder, files, fromSlot, toSlot)
+        
+        again = queryYN() 
+
+def queryYN():    
+    yesNo = {"yes": True, "no": False, "yeah": True, "yeet": True, "nahhhhhhh": False, "sure": True}
+    while True:
+        choice = input("Again? (y/n) ").lower().strip()
+
+        for answer, bool in yesNo.items():
+            if choice in answer:
+                return bool
+                
+        print("Please answer yes or no.")
 
 def queryOperation():
     prompt = "Copy to new mod folder or replace existing files?\n"
@@ -113,8 +128,7 @@ def queryOperation():
         prompt += "\t{}. {}\n".format(int(enum), operation.title())
     
     while True:
-        sys.stdout.write(prompt)
-        choice = input().lower()
+        choice = input(prompt).lower()
 
         if choice.isdigit():
             iChoice = int(choice)
@@ -125,7 +139,7 @@ def queryOperation():
                 if choice in operation:
                     return enum
                 
-        sys.stdout.write("Please select one of the presented options.\n")
+        print("Please select one of the presented options.")
 
 mainLoop()
 
