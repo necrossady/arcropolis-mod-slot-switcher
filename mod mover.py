@@ -17,20 +17,23 @@ def validateRequest(fromSlot, toSlot, modFolder):
     # ??? this will fail for UI-only mods, will need to address that if it should work with them
     cglob = "**\\[cC]0{}\\".format(fromSlot)
     cDirs = glob.glob(cglob, root_dir=modFolder, recursive=True)
+    
     if len(cDirs) < 1:
         return False, "no c0{} found in {}".format(fromSlot, modFolder)
-    elif len(cDirs) > 1:
-        return False, "too many c0{}s found in {}! only 1 should exist".format(fromSlot, modFolder)
+
+    # NEEDS HANDLING FOR MULTI MODELS
     
     # ensure modFolder does not already have a mod in slot to
     fcDir = cDirs[0]
     tcDir = fcDir[:-2]+"{}".format(toSlot)+"\\"
+    
     if modFolder[-1] != "\\": modFolder = modFolder + "\\"
+    
     toPath = modFolder + tcDir
     if os.path.isdir(toPath):
         return False, "{} already exists".format(toPath)
 
-    return True, ""
+    return True, "{}{}".format(modFolder,fcDir)
 
 def getModFolder():
     print("select the mod folder")
@@ -54,13 +57,15 @@ def getFilesToChange(fromSlot, folder):
 def mainLoop():
     modFolder = getModFolder()
     fromSlot, toSlot = getSlots()
-    ok, msg = validateRequest(fromSlot, toSlot, modFolder)
+    ok, cPath = validateRequest(fromSlot, toSlot, modFolder)
     if not ok:
         print(msg)
         input()
         return
 
     print("Valid input...")
+    print("Valid input, moving character mods from {} to slot {}".format(cPath, toSlot))
+    files = getFilesToChange(fromSlot, modFolder)
 
 mainLoop()
 
