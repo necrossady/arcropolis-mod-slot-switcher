@@ -1,7 +1,14 @@
 import os
 import glob
-from tkinter import Tk     # from tkinter import Tk for Python 3.x
+from tkinter import Tk
 from tkinter.filedialog import askdirectory
+from enum import Enum, auto
+
+
+class Operation(Enum):
+    COPY = 1
+    REPLACE = auto()
+    FINAL = auto()
 
 def validateRequest(fromSlot, toSlot, modFolder):
     # ensure slots are 0-7
@@ -61,9 +68,33 @@ def mainLoop():
         input()
         return
 
-    print("Valid input...")
-    print("Valid input, moving character mods from {} to slot {}".format(cPath, toSlot))
+    op = queryOperation():
+
+    operations = {Operation.COPY: "copying", Operation.REPLACE: "moving"}
+    print("{} character mods from {} to slot {}".format(operations[op], cPath, toSlot))
     files = getFilesToChange(fromSlot, modFolder)
+
+def queryOperation():
+    prompt = """Copy to new mod folder or replace existing files?
+    \t1. Copy
+    \t2. Replace
+    \n"""
+
+    options = {Operation.COPY: "copy", Operation.REPLACE: "replace",}
+
+    
+    while True:
+        sys.stdout.write(prompt)
+        choice = input().lower()
+
+        if choice.isdigit() and 0 < int(choice) and int(choice) < Operation.FINAL:
+            return Operation(int(choice))
+        elif choice in options[Operation.COPY]:
+            return Operation.COPY
+        elif choice in options[Operation.REPLACE]:
+            return Operation.REPLACE
+        else:
+            sys.stdout.write("Please select one of the presented options.\n")
 
 mainLoop()
 
