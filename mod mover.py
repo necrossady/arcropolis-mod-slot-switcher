@@ -49,10 +49,8 @@ def getSlots():
     return f,t
 
 def getFilesToChange(fromSlot, folder):
-    # go through folder:
-    #   get c0X folder where X is fromSlot
-    #   change _0X files where X is fromSlot
-    pass
+    filePattern = r"**\*0{}.*".format(fromSlot)
+    return glob.glob(filePattern, root_dir=folder, recursive=True)
 
 def mainLoop():
     modFolder = getModFolder()
