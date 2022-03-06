@@ -85,19 +85,26 @@ def changeFiles(folder, files, fromSlot, toSlot):
         os.rename(oldFile, newFile)
 
 def mainLoop():
-    modFolder = getModFolder()
-    fromSlot, toSlot = getSlots()
-    ok, cPath = validateRequest(fromSlot, toSlot, modFolder)
-    if not ok:
-        print(msg)
-        input()
-        return
-
-    op = queryOperation():
-
-    operations = {Operation.COPY: "copying", Operation.REPLACE: "moving"}
-    print("{} character mods from {} to slot {}".format(operations[op], cPath, toSlot))
-    files = getFilesToChange(fromSlot, modFolder)
+    while True:
+        modFolder = getModFolder()
+        fromSlot, toSlot = getSlots()
+        ok, cPath = validateRequest(fromSlot, toSlot, modFolder)
+        if not ok:
+            print(msg)
+            input()
+            return
+    
+        op = queryOperation()
+    
+        print("{} character mods from {} to slot {}".format(operations[op], cPath, toSlot))
+    
+        if op is Operation.QUIT:
+            return
+        elif op is Operation.COPY:
+            modFolder = copyFolder(modFolder, toSlot)
+        files = getFilesToChange(fromSlot, modFolder)
+    
+        changeFiles(modFolder, files, fromSlot, toSlot)
 
 def queryOperation():
     prompt = "Copy to new mod folder or replace existing files?\n"
