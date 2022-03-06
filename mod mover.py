@@ -2,14 +2,21 @@ import os
 import glob
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
-from enum import Enum, auto
+from enum import IntEnum, auto
 
 
-class Operation(Enum):
+class Operation(IntEnum):
     COPY = 1
     REPLACE = auto()
+    QUIT = auto()
     FINAL = auto()
 
+operations = {
+    Operation.COPY: "copy",
+    Operation.REPLACE: "replace",
+    Operation.QUIT: "quit"
+    }
+   
 def validateRequest(fromSlot, toSlot, modFolder):
     # ensure slots are 0-7
     if not(isinstance(fromSlot,int) and isinstance(toSlot,int)):        
@@ -75,26 +82,25 @@ def mainLoop():
     files = getFilesToChange(fromSlot, modFolder)
 
 def queryOperation():
-    prompt = """Copy to new mod folder or replace existing files?
-    \t1. Copy
-    \t2. Replace
-    \n"""
+    prompt = "Copy to new mod folder or replace existing files?\n"
 
-    options = {Operation.COPY: "copy", Operation.REPLACE: "replace",}
-
+    for enum, operation in operations.items():
+        prompt += "\t{}. {}\n".format(int(enum), operation.title())
     
     while True:
         sys.stdout.write(prompt)
         choice = input().lower()
 
-        if choice.isdigit() and 0 < int(choice) and int(choice) < Operation.FINAL:
-            return Operation(int(choice))
-        elif choice in options[Operation.COPY]:
-            return Operation.COPY
-        elif choice in options[Operation.REPLACE]:
-            return Operation.REPLACE
+        if choice.isdigit():
+            iChoice = int(choice)
+            if 0 < iChoice and iChoice < Operation.FINAL:
+                return Operation(int(choice))
         else:
-            sys.stdout.write("Please select one of the presented options.\n")
+            for enum, operation in operations.items():
+                if choice in operation:
+                    return enum
+                
+        sys.stdout.write("Please select one of the presented options.\n")
 
 mainLoop()
 
