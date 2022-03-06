@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
 from enum import IntEnum, auto
@@ -64,7 +65,24 @@ def getSlots():
 
 def getFilesToChange(fromSlot, folder):
     filePattern = r"**\*0{}.*".format(fromSlot)
-    return glob.glob(filePattern, root_dir=folder, recursive=True)
+    folderPattern = r"**\c0{}\\".format(fromSlot)
+    files = glob.glob(folderPattern, root_dir=folder, recursive=True)
+    folders = glob.glob(filePattern, root_dir=folder, recursive=True)
+    return files + folders
+
+def copyFolder(folder, toSlot):
+    newFolder = "{}.0{}".format(folder,toSlot)
+    files = os.listdir(folder)
+    shutil.copytree(folder,newFolder)
+    return newFolder
+
+def changeFiles(folder, files, fromSlot, toSlot):
+    sFrom = "0{}".format(fromSlot)
+    sTo = "0{}".format(toSlot)
+    for file in files:
+        oldFile = "{}\\{}".format(folder,file)
+        newFile = "{}\\{}".format(folder,file.replace(sFrom, sTo))
+        os.rename(oldFile, newFile)
 
 def mainLoop():
     modFolder = getModFolder()
