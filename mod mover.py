@@ -19,6 +19,17 @@ operations = {
     }
    
 def validateRequest(fromSlot, toSlot, modFolder):
+    """
+    This validates copy/move requests.
+
+    :param int fromSlot: the slot to move/copy a mod from
+    :param int toSlot: the slot to move/copy a mod to
+    :param string modFolder: the root path of the mod folder 
+    :returns:
+        - bool - whether the validation was successful
+        - msg - if successful, the c0X directory of the slot to copy/move from
+                if unsuccessful, the reason for failure
+    """
     # ensure slots are 0-7
     if not(isinstance(fromSlot,int) and isinstance(toSlot,int)):        
         return False, "slots must be integers"
@@ -51,12 +62,24 @@ def validateRequest(fromSlot, toSlot, modFolder):
     return True, "{}{}".format(modFolder,fcDir)
 
 def getModFolder():
+    """
+    This queries the user for the mod folder root.
+    :returns:
+        - modFolder - the user's chosen directory
+    """
+    
     print("select the mod folder")
     Tk().withdraw()
     modFolder = askdirectory(title="Select the root mod folder")
     return modFolder
 
 def getSlots():
+    """
+    This queries the user for slots to copy/move from and to.
+    :returns:
+        - from - the slot number to copy/move from
+        - to - the slot number to copy/move to
+    """
     f = input("Move from which slot? ")
     t = input("Move to which slot? ")
     f = int(f)
