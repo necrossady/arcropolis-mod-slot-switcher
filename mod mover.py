@@ -50,16 +50,17 @@ def validateRequest(fromSlot, toSlot, modFolder):
     # NEEDS HANDLING FOR MULTI MODELS
     
     # ensure modFolder does not already have a mod in slot to
-    fcDir = cDirs[0]
-    tcDir = fcDir[:-2]+"{}".format(toSlot)+"\\"
+    fromcDir = cDirs[0]
+    tocDir = fromcDir[:-2]+"{}".format(toSlot)+"\\"
     
+    # if folder path doesn't end with \, add it
     if modFolder[-1] != "\\": modFolder = modFolder + "\\"
     
-    toPath = modFolder + tcDir
+    toPath = modFolder + tocDir
     if os.path.isdir(toPath):
         return False, "{} already exists".format(toPath)
 
-    return True, "{}{}".format(modFolder,fcDir)
+    return True, "{}{}".format(modFolder,fromcDir)
 
 def getModFolder():
     """
