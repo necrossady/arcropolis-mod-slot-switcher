@@ -109,41 +109,59 @@ def changeFiles(folder, files, fromSlot, toSlot):
         os.rename(oldFile, newFile)
 
 def mainLoop():
-    again = True 
+    again = True
+    same = False
     
     while again:
-        modFolder = getModFolder()
-        fromSlot, toSlot = getSlots()
-        ok, msg = validateRequest(fromSlot, toSlot, modFolder)
-        if not ok:
-            print(msg)
-            input()
-        cPath = msg
-    
+
         op = queryOperation()
-    
-        print("{} character mods from {} to slot {}".format(operations[op], cPath, toSlot))
-    
+
         if op is Operation.QUIT:
             return
-        elif op is Operation.COPY:
-            modFolder = copyFolder(modFolder, toSlot)
-        files = getFilesToChange(fromSlot, modFolder)
-    
-        changeFiles(modFolder, files, fromSlot, toSlot)
         
-        again = queryYN() 
+        if not same:
+            modFolder = getModFolder()
+ 
+        doOperation(modFolder, op)
+        
+        again = queryYN("Again?")
+        same = queryYN("Same root folder?")
 
-def queryYN():    
+def queryYN(query):    
     yesNo = {"yes": True, "no": False, "yeah": True, "yeet": True, "nahhhhhhh": False, "sure": True}
     while True:
-        choice = input("Again? (y/n) ").lower().strip()
+        choice = input(query + " (y/n) ").lower().strip()
 
         for answer, bool in yesNo.items():
             if choice in answer:
                 return bool
                 
         print("Please answer yes or no.")
+
+def doOperation(modFolder, op):
+    if op is Operation.COPY or op is Operation.REPLACE:
+        doCopyReplace(modFolder, op)
+    else:
+        doDelete(modFolder)
+
+def doCopyReplace(modFolder, op):
+    ok = False
+    while not ok:
+        fromSlot, toSlot = getSlots()
+        ok, msg = validateRequest(fromSlot, toSlot, modFolder)
+        if not ok:
+            print(msg)
+            input()
+
+    cPath = msg
+    
+    print("{} character mods from {} to slot {}".format(operations[op], cPath, toSlot))
+
+    if op is Operation.COPY:
+        modFolder = copyFolder(modFolder, toSlot)
+    files = getFilesToChange(fromSlot, modFolder)
+    
+    changeFiles(modFolder, files, fromSlot, toSlot)
 
 def queryOperation():
     prompt = "Copy to new mod folder or replace existing files?\n"
